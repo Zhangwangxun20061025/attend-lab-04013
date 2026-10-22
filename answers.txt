@@ -1,0 +1,54 @@
+========================================
+Question 2:
+Suppose an instructor really use this service to take attendance in a classroom, what kind of problems he or she may run into?
+========================================
+
+Several practical problems would arise:
+
+1. Proxy attendance (cheating): The only check is entering a student ID and name. There is no identity verification at all, so a student can easily sign in for absent classmates by typing their ID and name.
+
+2. No duplicate check: The same student can submit the form multiple times; there is no logic to prevent double sign-in.
+
+3. No time restriction: Students can sign in at any time — before class, after class, or even from home the next day. There is no window that enforces "only during this class period."
+
+4. Data loss on restart: The attendee list is stored in memory (an ArrayList). When Render's free tier sleeps after 15 minutes of inactivity and later wakes up, or when the service redeploys, all attendance records are wiped.
+
+5. Concurrency / thread-safety issue: ArrayList is not thread-safe. If the whole class submits at the same moment, concurrent writes could corrupt the list or lose entries.
+
+6. Cold start delay: Render's free tier spins down after 15 minutes. The first request in class may take 30+ seconds to wake up the service, which is awkward during a live lecture.
+
+7. Privacy exposure: The full attendee list (student IDs + names) is visible to anyone who visits the URL.
+
+8. No location/device check: A student does not need to be physically in the classroom to sign in. They can do it remotely.
+
+9. Classroom Wi-Fi reliability: If the classroom network is unstable, students may fail to load the page or get errors.
+
+
+========================================
+Question 3:
+Which part in Attend.java needs to modify in order the Attendee List be sorted by student id?
+========================================
+
+In the doGet() method, right before the for loop that prints the attendee list
+(the loop that does `for (String a : attendees) { ... }`), add a call to sort the list:
+
+    Collections.sort(attendees);
+
+You also need to add this import at the top of Attend.java:
+
+    import java.util.Collections;
+
+Because each entry in attendees is stored as "studentID name" (the ID comes first),
+the natural String sort order puts entries in ascending student-ID order.
+
+Concretely, the modified section looks like this:
+
+    out.println("<h3>Attendees (" + attendees.size() + ")</h3><ol>");
+
+    Collections.sort(attendees);          // <-- ADD THIS LINE
+
+    for (String a : attendees) {
+        out.println("<li>" + a + "</li>");
+    }
+
+    out.println("</ol>");

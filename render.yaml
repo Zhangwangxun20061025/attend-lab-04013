@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: attend04013
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package
+    startCommand: java -jar target/attend-lab-1.0.jar
